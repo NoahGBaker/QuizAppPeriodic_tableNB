@@ -5,7 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="@color/TextBg">
 
     <TextView
         android:id="@+id/QuestionNumber"
@@ -28,7 +29,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.173" />
+        app:layout_constraintVertical_bias="0.173"
+        android:background="@color/backgroundBlue"
+        android:textColor="@color/black"
+        android:textAlignment="center"
+        android:outlineProvider="background"
+        />
 
     <Button
         android:id="@+id/True"
@@ -41,7 +47,8 @@
         app:layout_constraintHorizontal_bias="0.305"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Question"
-        app:layout_constraintVertical_bias="0.611" />
+        app:layout_constraintVertical_bias="0.611"
+        android:backgroundTint="@color/blue"/>
 
     <Button
         android:id="@+id/False"
@@ -54,18 +61,28 @@
         app:layout_constraintHorizontal_bias="0.967"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Question"
-        app:layout_constraintVertical_bias="0.611" />
+        app:layout_constraintVertical_bias="0.611"
+        android:backgroundTint="@color/blue"/>
 
-    <TextView
-        android:id="@+id/finalScoreText"
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Final Score: 0/0"
-        android:textSize="50dp"
-        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"  />
+
+    <Button
+        android:id="@+id/previousButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Previous"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.143"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.918"
+        android:backgroundTint="@color/black"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

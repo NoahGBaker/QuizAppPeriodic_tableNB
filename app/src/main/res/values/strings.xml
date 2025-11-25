@@ -1,4 +1,76 @@
 <resources>
     <string name="app_name">QuizAppPeriodic_tableNB</string>
     <string name="final_score_0_0">Final Score: 0/0</string>
+    <string name="TrueButton">True</string>
+    <string name="FalseButton">False</string>
+    <string name="PreviousButton">Previous</string>
+    <string name="QuestionNum">#1</string>
+    <string name="text">text</string>
+    <!-- Question 1 -->
+    <string name="question_01">The most abundant element in plastics is Carbon</string>
+    <string name="hint_01">Carbon is used the most in manufacturing</string>
+    <string name="back_to_final_score">Back to Score</string>
+
+    <!-- Question 2 -->
+    <string name="question_02">The air is made up mostly of Oxygen</string>
+    <string name="hint_02">The air has other elements in it!</string>
+
+    <!-- Question 3 -->
+    <string name="question_03">All elements on the periodic table can be found in nature.</string>
+    <string name="hint_03">Think about synthetic elements like Plutonium or Einsteinium that are created in laboratories.</string>
+
+    <!-- Question 4 -->
+    <string name="question_04">One of most reactive groups on the periodic table are Alkali metals.</string>
+    <string name="hint_04">Alkali metals are in Group 1 and react violently with water - they are indeed highly reactive!</string>
+
+    <!-- Question 5 -->
+    <string name="question_05">Mendelevium also known as Element 101 was discovered by Dimitri Mendelev the man who invented the periodic table.</string>
+    <string name="hint_05">Uranium aka Element 82 is radioactive meaning it sheds atoms slowly, think of any elements past 82.</string>
+
+    <!-- Question 6 -->
+    <string name="question_06">Uranium eventually becomes lead if                                       you give it time.</string>
+    <string name="hint_06">Radioactivity is the decay of atoms, slowly breaking themselves down.</string>
+
+    <!-- Question 7 -->
+    <string name="question_07">Mercury is the only element liquid at room temperature.</string>
+    <string name="hint_07">The question says Element not metal.</string>
+
+    <!-- Question 8 -->
+    <string name="question_08">According to scientists we are technically made of stardust.</string>
+    <string name="hint_08">Think of where we came from, how the universe started.</string>
+
+    <!-- Question 9 -->
+    <string name="question_09">The letter J appears only once in the periodic table.</string>
+    <string name="hint_09">What element has J in it? Think!</string>
+
+    <!-- Question 10 -->
+    <string name="question_10">Protons, Neutrons and Electrons are the simplest form of matter</string>
+    <string name="hint_10">If they are the simplest form of matter, what are they made of?</string>
+
+    <string name="hint_button">Hint</string>
+    <string name="hint_title">Hint</string>
+    <string name="hint_placeholder">Hint will appear here</string>
+    <string name="no_hint_available">No hint available for this question</string>
+    <string name="back_to_quiz">Back to Quiz</string>
+
+    <string name="email_score">Email Score</string>
+    <string name="email_subject">My Quiz Score</string>
+    <string name="email_body">I scored %1$d out of %2$d on the quiz!</string>
+    <string name="send_email">Send email via...</string>
+    <string name="no_email_app">No email app installed</string>
+
+    <string name="score_message">You scored %1$d out of %2$d!</string>
+    <string name="retake_quiz">Retake Quiz</string>
+
+    <string name="correct_answer">Correct!</string>
+    <string name="wrong_answer">Wrong.</string>
+    <string name="already_answered">You already answered this question!</string>
+    <string name="previous_penalty">-1 point penalty for going back</string>
+    <string name="next">Next</string>
+    <string name="view_answers">View Answers</string>
+    <string name="question">"Question "</string>
+    <string name="your_answer">"Your Answer: "</string>
+    <string name="correct_answerr">"Correct Answer: "</string>
+    <string name="correct">✓ CORRECT</string>
+    <string name="incorrectttttt">✗ INCORRECT</string>
 </resources>

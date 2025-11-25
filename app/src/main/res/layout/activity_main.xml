@@ -12,8 +12,8 @@
         android:id="@+id/QuestionNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="#1"
-        android:textSize="50dp"
+        android:text="@string/QuestionNum"
+        android:textSize="50sp"
         app:layout_constraintBottom_toTopOf="@+id/Question"
         app:layout_constraintEnd_toEndOf="@+id/Question"
         app:layout_constraintStart_toStartOf="@+id/Question"
@@ -23,25 +23,25 @@
         android:id="@+id/Question"
         android:layout_width="384dp"
         android:layout_height="174dp"
-        android:text="Question, Question Question blah blah i love chicken nuggets"
-        android:textSize="25dp"
+        android:background="@color/backgroundBlue"
+        android:outlineProvider="background"
+        android:text="text"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.173"
-        android:background="@color/backgroundBlue"
-        android:textColor="@color/black"
-        android:textAlignment="center"
-        android:outlineProvider="background"
-        />
+        tools:ignore="HardcodedText" />
 
     <Button
         android:id="@+id/True"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="True"
-        android:textSize="50dp"
+        android:text="@string/TrueButton"
+        android:textSize="50sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/False"
         app:layout_constraintHorizontal_bias="0.305"
@@ -54,15 +54,15 @@
         android:id="@+id/False"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="False"
-        android:textSize="50dp"
+        android:backgroundTint="@color/blue"
+        android:text="@string/FalseButton"
+        android:textSize="50sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.967"
+        app:layout_constraintHorizontal_bias="0.934"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Question"
-        app:layout_constraintVertical_bias="0.611"
-        android:backgroundTint="@color/blue"/>
+        app:layout_constraintVertical_bias="0.61" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -72,17 +72,56 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"  />
 
+
+    <Button
+        android:id="@+id/nextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:backgroundTint="@color/black"
+        android:text="@string/next"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.703"
+        app:layout_constraintStart_toEndOf="@+id/previousButton"
+        app:layout_constraintTop_toBottomOf="@+id/False"
+        app:layout_constraintVertical_bias="0.037" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="386dp"
+        android:layout_height="203dp"
+        android:layout_marginTop="1dp"
+        app:layout_constraintBottom_toTopOf="@+id/False"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Question"
+        />
+
     <Button
         android:id="@+id/previousButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Previous"
+        android:backgroundTint="@color/black"
+        android:text="@string/PreviousButton"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.143"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.918"
-        android:backgroundTint="@color/black"/>
+        app:layout_constraintEnd_toEndOf="@+id/True"
+        app:layout_constraintStart_toStartOf="@+id/True"
+        app:layout_constraintTop_toBottomOf="@+id/True"
+        app:layout_constraintVertical_bias="0.459" />
+
+    <Button
+        android:id="@+id/hintButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/black"
+        android:text="Hint"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/nextButton"
+        app:layout_constraintHorizontal_bias="0.303"
+        app:layout_constraintStart_toEndOf="@+id/previousButton"
+        app:layout_constraintTop_toBottomOf="@+id/False"
+        app:layout_constraintVertical_bias="0.959"
+        tools:ignore="HardcodedText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,8 +6,10 @@ import static android.widget.Toast.LENGTH_SHORT;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,13 +25,19 @@ public class MainActivity extends AppCompatActivity {
     Button trueButton;
     Button falseButton;
     Button previous;
+    Button hintButton;
+    ImageView image;
+    Button nextButton;
 
     Toast popup;
-    ArrayList<Object[]> questions = new ArrayList<Object[]>();
+    ArrayList<Question> questions = new ArrayList<Question>();
+    MediaPlayer mediaPlayer;
 
     int qnum = 0;
     int numCorrect = 0;
 
+    ArrayList<Boolean> Answers = new ArrayList<>();  // FIXED: Initialize here
+    ArrayList<Boolean> UserAnswers = new ArrayList<>();  // FIXED: Initialize here
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -43,29 +51,129 @@ public class MainActivity extends AppCompatActivity {
         trueButton = findViewById(R.id.True);
         falseButton = findViewById(R.id.False);
         previous = findViewById(R.id.previousButton);
+        hintButton = findViewById(R.id.hintButton);
+        image = findViewById(R.id.imageView);
         popup = new Toast(this);
+        nextButton = findViewById(R.id.nextButton);
 
-        questions.add(new Object[]{"The most abundant element in plastics is Carbon", true});
-        questions.add(new Object[]{"The air is made up mostly of Oxygen", false});
-        questions.add(new Object[]{"All elements on the periodic table can be found in nature.", false});
-        questions.add(new Object[]{"The one of most reactive groups on the periodic table are Alkali metals.", true});
-        questions.add(new Object[]{"Mendelevium also known as Element 101 was discovered by Dimitri Mendelev the man who invented the periodic table.", false});
-        questions.add(new Object[]{"Uranium eventually becomes lead if you give it time.", true});
-        questions.add(new Object[]{"Mercury is the only element liquid at room temperature.", false});
-        questions.add(new Object[]{"According to scientists we are technically made of stardust.", true});
-        questions.add(new Object[]{"The letter J appears only once in the periodic table.", false});
-        questions.add(new Object[]{"Protons, Neutrons and Electrons are the simplest form of matter", false});
-        nextQuestion();
-        trueButton.setOnClickListener(v -> {
-            Object[] ques = questions.get(qnum);
-            if (ques[1].equals(true)) {
-                numCorrect++;
-                Toast.makeText(getApplicationContext(), "Correct!", LENGTH_SHORT).show();
+        questions.add(new Question(
+                getString(R.string.question_01),
+                getString(R.string.hint_01),
+                "True",
+                "img01",
+                "sound01"
+        ));
+        questions.add(new Question(
+                getString(R.string.question_02),
+                getString(R.string.hint_02),
+                "False",
+                "img02",
+                "sound01"
+        ));
+        questions.add(new Question(
+                getString(R.string.question_03),
+                getString(R.string.hint_03),
+                "False",
+                "img03",
+                "sound01"
+        ));
+        questions.add(new Question(
+                getString(R.string.question_04),
+                getString(R.string.hint_04),
+                "True",
+                "img04",
+                "sound01"
+        ));
+        questions.add(new Question(
+                getString(R.string.question_05),
+                getString(R.string.hint_05),
+                "False",
+                "img05",
+                "sound01"
+        ));
+        questions.add(new Question(
+                getString(R.string.question_06),
+                getString(R.string.hint_06),
+                "True",
+                "img06",
+                "sound01"
+        ));
+        questions.add(new Question(
+                getString(R.string.question_07),
+                getString(R.string.hint_07),
+                "False",
+                "img07",
+                "sound01"
+        ));
+        questions.add(new Question(
+                getString(R.string.question_08),
+                getString(R.string.hint_08),
+                "True",
+                "img08",
+                "sound01"
+        ));
+        questions.add(new Question(
+                getString(R.string.question_09),
+                getString(R.string.hint_09),
+                "False",
+                "img09",
+                "sound01"
+        ));
+        questions.add(new Question(
+                getString(R.string.question_10),
+                getString(R.string.hint_10),
+                "False",
+                "img10",
+                "sound01"
+        ));
+
+        // Build correct answers list
+        for (Question q : questions) {
+            String answer = q.getAnswer();
+            if (answer.equals("True")) {
+                Answers.add(true);
+            } else if (answer.equals("False")) {
+                Answers.add(false);
             } else {
-                Toast.makeText(getApplicationContext(), "Wrong.", LENGTH_SHORT).show();
+                Answers.add(null);
+            }
+        }
+
+        // Initialize UserAnswers with null values (not answered yet)
+        for (int i = 0; i < questions.size(); i++) {
+            UserAnswers.add(null);
+        }
+
+        nextQuestion();
+
+        nextButton.setOnClickListener(v -> {
+            if (qnum + 1 < questions.size()) {
+                qnum++;
+                nextQuestion();
+            } else {
+                nextScene();
+            }
+        });
+
+        trueButton.setOnClickListener(v -> {
+            Question ques = questions.get(qnum);
+
+            if (ques.hasBeenAnswered()) {
+                Toast.makeText(getApplicationContext(), getString(R.string.already_answered), LENGTH_SHORT).show();
+                return;
             }
 
-            if (qnum+1 < questions.size()) {
+            ques.setHasBeenAnswered(true);
+            UserAnswers.set(qnum, true);  // FIXED: Use set() instead of add()
+
+            if (ques.getAnswer().equals("True")) {
+                numCorrect++;
+                Toast.makeText(getApplicationContext(), getString(R.string.correct_answer), LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), getString(R.string.wrong_answer), LENGTH_SHORT).show();
+            }
+
+            if (qnum + 1 < questions.size()) {
                 qnum++;
                 nextQuestion();
             } else {
@@ -74,44 +182,127 @@ public class MainActivity extends AppCompatActivity {
         });
 
         falseButton.setOnClickListener(v -> {
-            Object[] quest = questions.get(qnum);
-            if (quest[1].equals(false)) {
-                numCorrect++;
-                Toast.makeText(getApplicationContext(), "Correct!", LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getApplicationContext(), "Wrong.", LENGTH_SHORT).show();
+            Question quest = questions.get(qnum);
+
+            if (quest.hasBeenAnswered()) {
+                Toast.makeText(getApplicationContext(), getString(R.string.already_answered), LENGTH_SHORT).show();
+                return;
             }
 
-            if (qnum+1 < questions.size()) {
+            quest.setHasBeenAnswered(true);
+            UserAnswers.set(qnum, false);  // FIXED: Use set() instead of add()
+
+            if (quest.getAnswer().equals("False")) {
+                numCorrect++;
+                Toast.makeText(getApplicationContext(), getString(R.string.correct_answer), LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), getString(R.string.wrong_answer), LENGTH_SHORT).show();
+            }
+
+            if (qnum + 1 < questions.size()) {
                 qnum++;
                 nextQuestion();
             } else {
                 nextScene();
             }
         });
+
         previous.setOnClickListener(v -> {
-            if (qnum < questions.size() && qnum != 0) {
+            if (qnum > 0) {
                 qnum--;
                 nextQuestion();
-                numCorrect--;
+                if (numCorrect > 0) {
+                    numCorrect--;
+                }
+                Toast.makeText(getApplicationContext(), getString(R.string.previous_penalty), LENGTH_SHORT).show();
             }
+        });
+
+        hintButton.setOnClickListener(v -> {
+            Intent hintIntent = new Intent(MainActivity.this, ViewHintActivity.class);
+            hintIntent.putExtra("HINT", questions.get(qnum).getHint());
+            startActivity(hintIntent);
         });
     }
 
-
+    @SuppressLint("SetTextI18n")
     public void nextQuestion() {
-        Object[] quesi = questions.get(qnum);
+        Question quesi = questions.get(qnum);
         if (qnum < questions.size()) {
-            question.setText((String) quesi[0]);
-            questionNum.setText("#" + (qnum+1));
+            question.setText(quesi.getQuestionText());
+            questionNum.setText("#" + (qnum + 1));
+
+            String imgPath = quesi.getImageFilePath();
+            if (imgPath != null && !imgPath.isEmpty()) {
+                int resId = getResources().getIdentifier(imgPath, "drawable", getPackageName());
+                if (resId != 0) {
+                    image.setImageResource(resId);
+                    image.setVisibility(VISIBLE);
+                } else {
+                    image.setVisibility(INVISIBLE);
+                }
+            } else {
+                image.setVisibility(INVISIBLE);
+            }
+            playSound("sound01");
+        }
+    }
+
+    private void playSound(String soundFileName) {
+        if (soundFileName == null || soundFileName.isEmpty()) {
+            return;
+        }
+
+        try {
+            stopSound();
+            int soundId = getResources().getIdentifier(soundFileName, "raw", getPackageName());
+
+            if (soundId != 0) {
+                mediaPlayer = MediaPlayer.create(this, soundId);
+                mediaPlayer.setOnCompletionListener(mp -> stopSound());
+                mediaPlayer.start();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void stopSound() {
+        if (mediaPlayer != null) {
+            try {
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
+                }
+                mediaPlayer.release();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            mediaPlayer = null;
         }
     }
 
     public void nextScene() {
+        stopSound();
         Intent myintent = new Intent(MainActivity.this, Scoree.class);
-        myintent.putExtra("SCORE",numCorrect);
-        myintent.putExtra("TOTAL",questions.size());
+        myintent.putExtra("SCORE", numCorrect);
+        myintent.putExtra("TOTAL", questions.size());
+        myintent.putExtra("UserAnswers", UserAnswers);  // Pass as Serializable
+        myintent.putExtra("Answers", Answers);  // Pass as Serializable
         startActivity(myintent);
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopSound();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+        }
     }
 }

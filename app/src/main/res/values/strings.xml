@@ -7,28 +7,28 @@
     <string name="QuestionNum">#1</string>
     <string name="text">text</string>
     <!-- Question 1 -->
-    <string name="question_01">The most abundant element in plastics is Carbon</string>
+    <string name="question_01">The most abundant element on the periodic table in plastics is _______ </string>
     <string name="hint_01">Carbon is used the most in manufacturing</string>
     <string name="back_to_final_score">Back to Score</string>
 
     <!-- Question 2 -->
-    <string name="question_02">The air is made up mostly of Oxygen</string>
-    <string name="hint_02">The air has other elements in it!</string>
+    <string name="question_02">The air is made up mostly of which element?</string>
+    <string name="hint_02">The air you breathe isnt pure oxygen!</string>
 
     <!-- Question 3 -->
-    <string name="question_03">All elements on the periodic table can be found in nature.</string>
-    <string name="hint_03">Think about synthetic elements like Plutonium or Einsteinium that are created in laboratories.</string>
+    <string name="question_03">What is rust chemically known as?</string>
+    <string name="hint_03">Iron and oxygen react to create this compound.</string>
 
     <!-- Question 4 -->
-    <string name="question_04">One of most reactive groups on the periodic table are Alkali metals.</string>
+    <string name="question_04">One of most reactive groups on the periodic table are what?.</string>
     <string name="hint_04">Alkali metals are in Group 1 and react violently with water - they are indeed highly reactive!</string>
 
     <!-- Question 5 -->
-    <string name="question_05">Mendelevium also known as Element 101 was discovered by Dimitri Mendelev the man who invented the periodic table.</string>
-    <string name="hint_05">Uranium aka Element 82 is radioactive meaning it sheds atoms slowly, think of any elements past 82.</string>
+    <string name="question_05">Mendelevium also known as Element 101 was created by _______ _________ the man who invented the periodic table.</string>
+    <string name="hint_05">Think of the person who invented the periodic table and think of when it was created</string>
 
     <!-- Question 6 -->
-    <string name="question_06">Uranium eventually becomes lead if                                       you give it time.</string>
+    <string name="question_06">Uranium eventually becomes ____ if you give it time.</string>
     <string name="hint_06">Radioactivity is the decay of atoms, slowly breaking themselves down.</string>
 
     <!-- Question 7 -->
@@ -36,11 +36,11 @@
     <string name="hint_07">The question says Element not metal.</string>
 
     <!-- Question 8 -->
-    <string name="question_08">According to scientists we are technically made of stardust.</string>
-    <string name="hint_08">Think of where we came from, how the universe started.</string>
+    <string name="question_08">Laughing gas is known as what?</string>
+    <string name="hint_08">Its got nitrogen in it! (Sorry not much of a hint im bad at these.)</string>
 
     <!-- Question 9 -->
-    <string name="question_09">The letter J appears only once in the periodic table.</string>
+    <string name="question_09">The letter _ doesnt appear in the periodic table.</string>
     <string name="hint_09">What element has J in it? Think!</string>
 
     <!-- Question 10 -->

@@ -37,32 +37,59 @@
         tools:ignore="HardcodedText" />
 
     <Button
-        android:id="@+id/True"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/Button1"
+        android:layout_width="168dp"
+        android:layout_height="49dp"
+        android:backgroundTint="@color/blue"
         android:text="@string/TrueButton"
-        android:textSize="50sp"
+        android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/False"
-        app:layout_constraintHorizontal_bias="0.305"
+        app:layout_constraintHorizontal_bias="0.288"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Question"
-        app:layout_constraintVertical_bias="0.611"
-        android:backgroundTint="@color/blue"/>
+        app:layout_constraintVertical_bias="0.556" />
 
     <Button
-        android:id="@+id/False"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/Button2"
+        android:layout_width="168dp"
+        android:layout_height="50dp"
         android:backgroundTint="@color/blue"
-        android:text="@string/FalseButton"
-        android:textSize="50sp"
+        android:text="@string/TrueButton"
+        android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.934"
+        app:layout_constraintEnd_toStartOf="@+id/False"
+        app:layout_constraintHorizontal_bias="0.288"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Question"
-        app:layout_constraintVertical_bias="0.61" />
+        app:layout_constraintVertical_bias="0.686" />
+
+    <Button
+        android:id="@+id/Button4"
+        android:layout_width="178dp"
+        android:layout_height="51dp"
+        android:backgroundTint="@color/blue"
+        android:text="@string/FalseButton"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.935"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Question"
+        app:layout_constraintVertical_bias="0.687" />
+    <Button
+        android:id="@+id/Button3"
+        android:layout_width="178dp"
+        android:layout_height="51dp"
+        android:backgroundTint="@color/blue"
+        android:text="@string/FalseButton"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.931"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Question"
+        app:layout_constraintVertical_bias="0.563" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -77,15 +104,12 @@
         android:id="@+id/nextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
         android:backgroundTint="@color/black"
         android:text="@string/next"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.703"
+        app:layout_constraintHorizontal_bias="0.8"
         app:layout_constraintStart_toEndOf="@+id/previousButton"
-        app:layout_constraintTop_toBottomOf="@+id/False"
-        app:layout_constraintVertical_bias="0.037" />
+        tools:layout_editor_absoluteY="619dp" />
 
     <ImageView
         android:id="@+id/imageView"
@@ -94,9 +118,10 @@
         android:layout_marginTop="1dp"
         app:layout_constraintBottom_toTopOf="@+id/False"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.48"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Question"
-        />
+        app:layout_constraintVertical_bias="0.076" />
 
     <Button
         android:id="@+id/previousButton"
@@ -106,9 +131,10 @@
         android:text="@string/PreviousButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/True"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/True"
         app:layout_constraintTop_toBottomOf="@+id/True"
-        app:layout_constraintVertical_bias="0.459" />
+        app:layout_constraintVertical_bias="0.526" />
 
     <Button
         android:id="@+id/hintButton"
@@ -118,10 +144,10 @@
         android:text="Hint"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/nextButton"
-        app:layout_constraintHorizontal_bias="0.303"
+        app:layout_constraintHorizontal_bias="0.565"
         app:layout_constraintStart_toEndOf="@+id/previousButton"
         app:layout_constraintTop_toBottomOf="@+id/False"
-        app:layout_constraintVertical_bias="0.959"
+        app:layout_constraintVertical_bias="0.8"
         tools:ignore="HardcodedText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

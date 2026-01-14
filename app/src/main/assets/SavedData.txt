@@ -1,0 +1,10 @@
+Carbon|What element has atomic number 6?|Hint about carbon|img01|sound01|Hydrogen,Magnesium,Carbon,Oxygen
+Nitrogen|What is the most abundant gas in Earth's atmosphere?|Hint about nitrogen|img02|sound01|Oxygen,Hydrogen,Argon,Nitrogen
+Iron oxide|What is rust chemically known as?|Hint about rust|img03|sound01|Ferrous oxide,Iron dioxide,Iron III oxide,Iron oxide
+Alkali Metals|What group on the periodic table includes lithium, sodium, and potassium?|Hint about alkali metals|img04|sound01|Halogens,Alkali Metals,Transition Metals,Alkali Earth Metals
+Dimitri Mendelev|Who created the first widely recognized periodic table?|Hint about periodic table creator|img05|sound01|Charles Darwin,John Green,Dimitri Mendelev,Mr. Massey
+Lead|What element has the symbol Pb?|Hint about lead|img06|sound01|Copper,Silver,Lead,Yittrium
+False, Bromine is liquid at room temperature|True or False: Mercury is the only liquid element at room temperature.|Hint about liquid elements|img07|sound01|False, Bromine is liquid at room temperature,False, Mercury isnt a liquid at room temperature,True,Maybe?
+Nitrious Oxide|What is the chemical name for laughing gas?|Hint about laughing gas|img08|sound01|Nitrious Oxide,Nitrogen Dioxide,Cloroform,Polytetrafluoroethylene
+J|What letter does NOT appear in the periodic table?|Hint about missing letter|img09|sound01|J,W,Z,V
+Quarks|What are protons and neutrons made of?|Hint about subatomic particles|img10|sound01|Lambda's Particles,Elements,They are the simplest form of matter.,Quarks

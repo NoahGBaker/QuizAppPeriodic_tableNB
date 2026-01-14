@@ -20,7 +20,18 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.text.InputType;
+import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,16 +46,19 @@ public class MainActivity extends AppCompatActivity {
     ImageView image;
     Button nextButton;
 
-    SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-    int defaultValue = getResources().getInteger(R.integer.saved_high_score_default_key);
-    int highScore = sharedPref.getInt(getString(R.string.saved_high_score_key), defaultValue);
-
     Toast popup;
     ArrayList<Question> questions = new ArrayList<Question>();
     MediaPlayer mediaPlayer;
 
+    //SharedPref
+    SharedPreferences sharedPref;
+    int defaultValue;
+    int highScore;
+
     int qnum = 0;
     int numCorrect = 0;
+
+    int score = 0;
 
     ArrayList<String> Answers = new ArrayList<>();  // Store correct answers as Strings
     ArrayList<String> UserAnswers = new ArrayList<>();  // Store user answers as Strings
@@ -67,7 +81,257 @@ public class MainActivity extends AppCompatActivity {
         image = findViewById(R.id.imageView);
         popup = new Toast(this);
         nextButton = findViewById(R.id.nextButton);
+        //SharedPref
+        sharedPref = getPreferences(Context.MODE_PRIVATE);
+        defaultValue = getResources().getInteger(R.integer.saved_high_score_default_key);
+        highScore = sharedPref.getInt(getString(R.string.saved_high_score_key), defaultValue);
 
+        // Check if user has entered initials before
+        String savedInitials = sharedPref.getString("user_initials", null);
+
+        if (savedInitials == null || savedInitials.isEmpty()) {
+            // First time user - show dialog
+            showInitialsDialog();
+        } else {
+            // User already has initials saved - start quiz directly
+            Toast.makeText(this, "Welcome back, " + savedInitials + "!", Toast.LENGTH_SHORT).show();
+            startQuiz();
+        }
+
+        // Button 1 Click Listener
+        Button1.setOnClickListener(v -> handleAnswerClick(Button1.getText().toString()));
+
+        // Button 2 Click Listener
+        Button2.setOnClickListener(v -> handleAnswerClick(Button2.getText().toString()));
+
+        // Button 3 Click Listener
+        Button3.setOnClickListener(v -> handleAnswerClick(Button3.getText().toString()));
+
+        // Button 4 Click Listener
+        Button4.setOnClickListener(v -> handleAnswerClick(Button4.getText().toString()));
+
+        nextButton.setOnClickListener(v -> {
+            if (qnum + 1 < questions.size()) {
+                qnum++;
+                nextQuestion();
+            } else {
+                nextScene();
+            }
+        });
+
+        previous.setOnClickListener(v -> {
+            if (qnum > 0) {
+                qnum--;
+                nextQuestion();
+                if (numCorrect > 0) {
+                    numCorrect--;
+                }
+                Toast.makeText(getApplicationContext(), getString(R.string.previous_penalty), LENGTH_SHORT).show();
+            }
+        });
+
+        hintButton.setOnClickListener(v -> {
+            Intent hintIntent = new Intent(MainActivity.this, ViewHintActivity.class);
+            hintIntent.putExtra("HINT", questions.get(qnum).getHint());
+            startActivity(hintIntent);
+        });
+    }
+
+    private void handleAnswerClick(String selectedAnswer) {
+        Question ques = questions.get(qnum);
+
+        if (ques.hasBeenAnswered()) {
+            Toast.makeText(getApplicationContext(), getString(R.string.already_answered), LENGTH_SHORT).show();
+            return;
+        }
+
+        ques.setHasBeenAnswered(true);
+        UserAnswers.set(qnum, selectedAnswer);
+
+        if (ques.getAnswer().equals(selectedAnswer)) {
+            numCorrect++;
+            if (score > highScore) {
+                editSharedPref(numCorrect);
+            }
+            Toast.makeText(getApplicationContext(), getString(R.string.correct_answer), LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getApplicationContext(), getString(R.string.wrong_answer), LENGTH_SHORT).show();
+            score = 0;
+        }
+
+        if (qnum + 1 < questions.size()) {
+            qnum++;
+            nextQuestion();
+        } else {
+            nextScene();
+        }
+    }
+    private void startQuiz() {
+        // Load questions from file
+        loadQuestionsFromFile();
+
+        // If no questions were loaded, add default ones
+        if (questions.isEmpty()) {
+            addDefaultQuestions();
+        }
+
+        // Build correct answers list
+        for (Question q : questions) {
+            Answers.add(q.getAnswer());
+        }
+
+        // Initialize UserAnswers
+        for (int i = 0; i < questions.size(); i++) {
+            UserAnswers.add(null);
+        }
+
+        nextQuestion();
+    }
+
+    @SuppressLint("SetTextI18n")
+    public void nextQuestion() {
+        Question quesi = questions.get(qnum);
+        if (qnum < questions.size()) {
+            question.setText(quesi.getQuestionText());
+            questionNum.setText("#" + (qnum + 1));
+
+            // Set the button texts to the choices
+            ArrayList<String> choices = quesi.getChoices();
+            if (choices != null && choices.size() >= 4) {
+                Button1.setText(choices.get(0));
+                Button2.setText(choices.get(1));
+                Button3.setText(choices.get(2));
+                Button4.setText(choices.get(3));
+            }
+
+            String imgPath = quesi.getImageFilePath();
+            if (imgPath != null && !imgPath.isEmpty()) {
+                int resId = getResources().getIdentifier(imgPath, "drawable", getPackageName());
+                if (resId != 0) {
+                    image.setImageResource(resId);
+                    image.setVisibility(VISIBLE);
+                } else {
+                    image.setVisibility(INVISIBLE);
+                }
+            } else {
+                image.setVisibility(INVISIBLE);
+            }
+            playSound("sound01");
+        }
+    }
+
+    private void playSound(String soundFileName) {
+        if (soundFileName == null || soundFileName.isEmpty()) {
+            return;
+        }
+
+        try {
+            stopSound();
+            int soundId = getResources().getIdentifier(soundFileName, "raw", getPackageName());
+
+            if (soundId != 0) {
+                mediaPlayer = MediaPlayer.create(this, soundId);
+                mediaPlayer.setOnCompletionListener(mp -> stopSound());
+                mediaPlayer.start();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void stopSound() {
+        if (mediaPlayer != null) {
+            try {
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
+                }
+                mediaPlayer.release();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            mediaPlayer = null;
+        }
+    }
+
+    public void nextScene() {
+        stopSound();
+        Intent myintent = new Intent(MainActivity.this, Scoree.class);
+        myintent.putExtra("SCORE", numCorrect);
+        myintent.putExtra("TOTAL", questions.size());
+        myintent.putExtra("UserAnswers", UserAnswers);
+        myintent.putExtra("Answers", Answers);
+        startActivity(myintent);
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopSound();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+        }
+    }
+
+    private void editSharedPref(int newHighScore) {
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(getString(R.string.saved_high_score_key), newHighScore);
+        editor.apply();
+
+    }
+
+    private void saveQuestionsToFile() {
+        String filename = "SavedData.txt";
+        StringBuilder fileContents = new StringBuilder();
+
+        // Build the content from your questions
+        for (int i = 0; i < questions.size(); i++) {
+            Question q = questions.get(i);
+            fileContents.append("Question ").append(i + 1).append(": ")
+                    .append(q.getQuestionText()).append("\n")
+                    .append("Answer: ").append(q.getAnswer()).append("\n\n");
+        }
+
+        try (FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE)) {
+            fos.write(fileContents.toString().getBytes());
+            Toast.makeText(this, "Questions saved successfully!", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error saving questions", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void loadQuestionsFromFile() {
+        try {
+            // Read from assets folder
+            InputStream is = getAssets().open("SavedData.txt");
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+
+            StringBuilder fileContents = new StringBuilder();
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                fileContents.append(line).append("\n");
+            }
+
+            br.close();
+            parseQuestionsFromText(fileContents.toString());
+
+            Toast.makeText(this, "Questions loaded successfully!", Toast.LENGTH_SHORT).show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error loading questions", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void addDefaultQuestions() {
         questions.add(new Question(
                 getString(R.string.question_01),
                 getString(R.string.hint_01),
@@ -198,181 +462,73 @@ public class MainActivity extends AppCompatActivity {
                     add("Quarks");
                 }}
         ));
+    }
 
-        // Build correct answers list
-        for (Question q : questions) {
-            Answers.add(q.getAnswer());
-        }
+    private void parseQuestionsFromText(String fileContents) {
+        String[] lines = fileContents.split("\n");
 
-        // Initialize UserAnswers with null values (not answered yet)
-        for (int i = 0; i < questions.size(); i++) {
-            UserAnswers.add(null);
-        }
+        for (String line : lines) {
+            if (line.trim().isEmpty()) continue;
 
-        nextQuestion();
+            // Split by | delimiter
+            String[] parts = line.split("\\|");
 
-        // Button 1 Click Listener
-        Button1.setOnClickListener(v -> handleAnswerClick(Button1.getText().toString()));
+            if (parts.length >= 6) {
+                String answer = parts[0].trim();
+                String questionText = parts[1].trim();
+                String hint = parts[2].trim();
+                String imagePath = parts[3].trim();
+                String soundPath = parts[4].trim();
+                String[] choicesArray = parts[5].split(",");
 
-        // Button 2 Click Listener
-        Button2.setOnClickListener(v -> handleAnswerClick(Button2.getText().toString()));
-
-        // Button 3 Click Listener
-        Button3.setOnClickListener(v -> handleAnswerClick(Button3.getText().toString()));
-
-        // Button 4 Click Listener
-        Button4.setOnClickListener(v -> handleAnswerClick(Button4.getText().toString()));
-
-        nextButton.setOnClickListener(v -> {
-            if (qnum + 1 < questions.size()) {
-                qnum++;
-                nextQuestion();
-            } else {
-                nextScene();
-            }
-        });
-
-        previous.setOnClickListener(v -> {
-            if (qnum > 0) {
-                qnum--;
-                nextQuestion();
-                if (numCorrect > 0) {
-                    numCorrect--;
+                // Convert choices array to ArrayList
+                ArrayList<String> choices = new ArrayList<>();
+                for (String choice : choicesArray) {
+                    choices.add(choice.trim());
                 }
-                Toast.makeText(getApplicationContext(), getString(R.string.previous_penalty), LENGTH_SHORT).show();
+
+                // Create and add the question
+                questions.add(new Question(questionText, hint, answer, imagePath, soundPath, choices));
             }
-        });
-
-        hintButton.setOnClickListener(v -> {
-            Intent hintIntent = new Intent(MainActivity.this, ViewHintActivity.class);
-            hintIntent.putExtra("HINT", questions.get(qnum).getHint());
-            startActivity(hintIntent);
-        });
-    }
-
-    private void handleAnswerClick(String selectedAnswer) {
-        Question ques = questions.get(qnum);
-
-        if (ques.hasBeenAnswered()) {
-            Toast.makeText(getApplicationContext(), getString(R.string.already_answered), LENGTH_SHORT).show();
-            return;
-        }
-
-        ques.setHasBeenAnswered(true);
-        UserAnswers.set(qnum, selectedAnswer);
-
-        if (ques.getAnswer().equals(selectedAnswer)) {
-            numCorrect++;
-            if (numCorrect > highScore) {
-                editSharedPref(numCorrect);
-            }
-            Toast.makeText(getApplicationContext(), getString(R.string.correct_answer), LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getApplicationContext(), getString(R.string.wrong_answer), LENGTH_SHORT).show();
-        }
-
-        if (qnum + 1 < questions.size()) {
-            qnum++;
-            nextQuestion();
-        } else {
-            nextScene();
         }
     }
 
-    @SuppressLint("SetTextI18n")
-    public void nextQuestion() {
-        Question quesi = questions.get(qnum);
-        if (qnum < questions.size()) {
-            question.setText(quesi.getQuestionText());
-            questionNum.setText("#" + (qnum + 1));
+    private void showInitialsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter Your Initials");
+        builder.setMessage("Please enter your initials (2-3 letters):");
 
-            // Set the button texts to the choices
-            ArrayList<String> choices = quesi.getChoices();
-            if (choices != null && choices.size() >= 4) {
-                Button1.setText(choices.get(0));
-                Button2.setText(choices.get(1));
-                Button3.setText(choices.get(2));
-                Button4.setText(choices.get(3));
-            }
+        // Create an EditText for user input
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
+        input.setHint("ABC");
+        builder.setView(input);
 
-            String imgPath = quesi.getImageFilePath();
-            if (imgPath != null && !imgPath.isEmpty()) {
-                int resId = getResources().getIdentifier(imgPath, "drawable", getPackageName());
-                if (resId != 0) {
-                    image.setImageResource(resId);
-                    image.setVisibility(VISIBLE);
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String initials = input.getText().toString().trim().toUpperCase();
+
+                // Validate initials (2-3 characters)
+                if (initials.length() >= 2 && initials.length() <= 3) {
+                    // Save to SharedPreferences
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putString("user_initials", initials);
+                    editor.apply();
+
+                    Toast.makeText(MainActivity.this, "Welcome, " + initials + "!", Toast.LENGTH_SHORT).show();
+
+                    // Now start the quiz
+                    startQuiz();
                 } else {
-                    image.setVisibility(INVISIBLE);
+                    Toast.makeText(MainActivity.this, "Please enter 2-3 letters", Toast.LENGTH_SHORT).show();
+                    showInitialsDialog(); // Show dialog again if invalid
                 }
-            } else {
-                image.setVisibility(INVISIBLE);
             }
-            playSound("sound01");
-        }
-    }
+        });
 
-    private void playSound(String soundFileName) {
-        if (soundFileName == null || soundFileName.isEmpty()) {
-            return;
-        }
-
-        try {
-            stopSound();
-            int soundId = getResources().getIdentifier(soundFileName, "raw", getPackageName());
-
-            if (soundId != 0) {
-                mediaPlayer = MediaPlayer.create(this, soundId);
-                mediaPlayer.setOnCompletionListener(mp -> stopSound());
-                mediaPlayer.start();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void stopSound() {
-        if (mediaPlayer != null) {
-            try {
-                if (mediaPlayer.isPlaying()) {
-                    mediaPlayer.stop();
-                }
-                mediaPlayer.release();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            mediaPlayer = null;
-        }
-    }
-
-    public void nextScene() {
-        stopSound();
-        Intent myintent = new Intent(MainActivity.this, Scoree.class);
-        myintent.putExtra("SCORE", numCorrect);
-        myintent.putExtra("TOTAL", questions.size());
-        myintent.putExtra("UserAnswers", UserAnswers);
-        myintent.putExtra("Answers", Answers);
-        startActivity(myintent);
-        finish();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        stopSound();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-            mediaPlayer.pause();
-        }
-    }
-
-    private void editSharedPref(int newHighScore) {
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt(getString(R.string.saved_high_score_key), newHighScore);
-        editor.apply();
-
+        builder.setCancelable(false); // User must enter initials
+        builder.show();
     }
 }

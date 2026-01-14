@@ -1,11 +1,15 @@
 package com.shuside.quizappperiodic_tablenb;
 
+import static android.app.PendingIntent.getActivity;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import static android.widget.Toast.LENGTH_SHORT;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.widget.Button;
@@ -30,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
     Button hintButton;
     ImageView image;
     Button nextButton;
+
+    SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+    int defaultValue = getResources().getInteger(R.integer.saved_high_score_default_key);
+    int highScore = sharedPref.getInt(getString(R.string.saved_high_score_key), defaultValue);
 
     Toast popup;
     ArrayList<Question> questions = new ArrayList<Question>();
@@ -255,6 +263,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (ques.getAnswer().equals(selectedAnswer)) {
             numCorrect++;
+            if (numCorrect > highScore) {
+                editSharedPref(numCorrect);
+            }
             Toast.makeText(getApplicationContext(), getString(R.string.correct_answer), LENGTH_SHORT).show();
         } else {
             Toast.makeText(getApplicationContext(), getString(R.string.wrong_answer), LENGTH_SHORT).show();
@@ -356,5 +367,12 @@ public class MainActivity extends AppCompatActivity {
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
         }
+    }
+
+    private void editSharedPref(int newHighScore) {
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(getString(R.string.saved_high_score_key), newHighScore);
+        editor.apply();
+
     }
 }

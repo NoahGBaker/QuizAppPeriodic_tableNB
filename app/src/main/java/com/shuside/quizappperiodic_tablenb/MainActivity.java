@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -33,6 +34,12 @@ import android.content.DialogInterface;
 import android.text.InputType;
 import android.widget.EditText;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 public class MainActivity extends AppCompatActivity {
 
     TextView question;
@@ -45,6 +52,11 @@ public class MainActivity extends AppCompatActivity {
     Button hintButton;
     ImageView image;
     Button nextButton;
+
+    String savedInitials;
+
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference ref = database.getReference();
 
     Toast popup;
     ArrayList<Question> questions = new ArrayList<Question>();
@@ -87,7 +99,8 @@ public class MainActivity extends AppCompatActivity {
         highScore = sharedPref.getInt(getString(R.string.saved_high_score_key), defaultValue);
 
         // Check if user has entered initials before
-        String savedInitials = sharedPref.getString("user_initials", null);
+        savedInitials = sharedPref.getString("user_initials", null);
+        ref.setValue(savedInitials);
 
         if (savedInitials == null || savedInitials.isEmpty()) {
             // First time user - show dialog
@@ -97,6 +110,23 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Welcome back, " + savedInitials + "!", Toast.LENGTH_SHORT).show();
             startQuiz();
         }
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = dataSnapshot.getValue(String.class);
+                Log.d("Data Change:", "Value is: " + value);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w("Data Change:", "Failed to read value.", error.toException());
+            }
+        });
+
 
         // Button 1 Click Listener
         Button1.setOnClickListener(v -> handleAnswerClick(Button1.getText().toString()));
@@ -152,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
             numCorrect++;
             if (score > highScore) {
                 editSharedPref(numCorrect);
+                ref.setValue(highScore);
             }
             Toast.makeText(getApplicationContext(), getString(R.string.correct_answer), LENGTH_SHORT).show();
         } else {
@@ -532,3 +563,4 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 }
+

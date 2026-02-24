@@ -32,8 +32,8 @@ public class Scoree extends AppCompatActivity {
         // Get score from intent
         int score = getIntent().getIntExtra("SCORE", 0);
         int total = getIntent().getIntExtra("TOTAL", 0);
-        ArrayList<Boolean> userAnswers = (ArrayList<Boolean>) getIntent().getSerializableExtra("UserAnswers");
-        ArrayList<Boolean> answers = (ArrayList<Boolean>) getIntent().getSerializableExtra("Answers");
+        ArrayList<String> userAnswers = (ArrayList<String>) getIntent().getSerializableExtra("UserAnswers");
+        ArrayList<String> answers = (ArrayList<String>) getIntent().getSerializableExtra("Answers");
 
         // Display score
         String scoreMessage = getString(R.string.score_message, score, total);

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "877507578650",
+    "project_id": "quiz-app-periodic-table",
+    "storage_bucket": "quiz-app-periodic-table.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:877507578650:android:dfefb3f56fca2059f77aa3",
+        "android_client_info": {
+          "package_name": "com.shuside.quizappperiodic_tablenb"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAcWjOyTHxDFOnh6LsAey1vlHUMB7zing"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

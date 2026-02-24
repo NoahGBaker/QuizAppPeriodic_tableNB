@@ -2,21 +2,31 @@ package com.shuside.quizappperiodic_tablenb;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class ViewScores extends AppCompatActivity {
 
     LinearLayout scoresContainer;
     Button backButton;
+    ArrayList<Question> questions;
+    // Get all questions
+    ArrayList<String> questionsText;
+
+    SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,14 +39,18 @@ public class ViewScores extends AppCompatActivity {
         // Get data from intent
         int score = getIntent().getIntExtra("SCOREE", 0);
         int total = getIntent().getIntExtra("TOTALL", 0);
-        ArrayList<Boolean> userAnswers = (ArrayList<Boolean>) getIntent().getSerializableExtra("ScoreUserAnswers");
-        ArrayList<Boolean> correctAnswers = (ArrayList<Boolean>) getIntent().getSerializableExtra("ScoreAnswers");
+        ArrayList<String> userAnswers = (ArrayList<String>) getIntent().getSerializableExtra("ScoreUserAnswers");
+        ArrayList<String> correctAnswers = (ArrayList<String>) getIntent().getSerializableExtra("ScoreAnswers");
 
-        // Get all questions
-        ArrayList<String> questions = getQuestionsFromStrings();
+        loadQuestionsFromFile();
+
+        for (Question ques : questions) {
+            questionsText.add(ques.getQuestionText());
+        }
+
 
         // Display each question with answers
-        displayResults(questions, userAnswers, correctAnswers);
+        displayResults(questionsText, userAnswers, correctAnswers);
 
         // Back button
         backButton.setOnClickListener(v -> {
@@ -49,7 +63,7 @@ public class ViewScores extends AppCompatActivity {
     }
 
 
-    private void displayResults(ArrayList<String> questions, ArrayList<Boolean> userAnswers, ArrayList<Boolean> correctAnswers) {
+    private void displayResults(ArrayList<String> questionText, ArrayList<String> userAnswers, ArrayList<String> correctAnswers) {
         scoresContainer.removeAllViews(); // Clear any existing views
 
         for (int i = 0; i < questions.size(); i++) {
@@ -59,46 +73,26 @@ public class ViewScores extends AppCompatActivity {
             questionContainer.setPadding(16, 16, 16, 32);
 
             // Question number and text
-            TextView questionText = new TextView(this);
-            questionText.setText(getString(R.string.question) + (i + 1) + ":\n" + questions.get(i));
-            questionText.setTextSize(16);
-            questionText.setTextColor(Color.BLACK);
-            questionText.setPadding(0, 0, 0, 16);
-            questionContainer.addView(questionText);
+            TextView quesText = new TextView(this);
+            quesText.setText(getString(R.string.question) + (i + 1) + ":\n" + questions.get(i));
+            quesText.setTextSize(16);
+            quesText.setTextColor(Color.BLACK);
+            quesText.setPadding(0, 0, 0, 16);
+            questionContainer.addView(quesText);
 
-            // User's answer
-            TextView userAnswerText = new TextView(this);
-            String userAnswerStr = (i < userAnswers.size() && userAnswers.get(i) != null)
-                    ? (userAnswers.get(i) ? "True" : "False")
-                    : "Not Answered";
-            userAnswerText.setText(getString(R.string.your_answer) + userAnswerStr);
-            userAnswerText.setTextSize(14);
-            userAnswerText.setPadding(0, 0, 0, 8);
-            questionContainer.addView(userAnswerText);
+            TextView answerText = new TextView(this);
+            answerText.setText("Your Answer: " + userAnswers.get(i));
+            answerText.setTextSize(16);
+            answerText.setTextColor(Color.BLACK);
+            answerText.setPadding(0, 0, 0, 16);
+            questionContainer.addView(answerText);
 
-            // Correct answer
             TextView correctAnswerText = new TextView(this);
-            String correctAnswerStr = (correctAnswers.get(i) != null)
-                    ? (correctAnswers.get(i) ? "True" : "False")
-                    : "Unknown";
-            correctAnswerText.setText(getString(R.string.correct_answerr) + correctAnswerStr);
-            correctAnswerText.setTextSize(14);
-            correctAnswerText.setPadding(0, 0, 0, 8);
+            correctAnswerText.setText("Correct Answer: " + correctAnswers.get(i));
+            correctAnswerText.setTextSize(16);
+            correctAnswerText.setTextColor(Color.BLACK);
+            correctAnswerText.setPadding(0, 0, 0, 16);
             questionContainer.addView(correctAnswerText);
-
-            // Result indicator
-            TextView resultText = new TextView(this);
-            if (i < userAnswers.size() && userAnswers.get(i) != null &&
-                    userAnswers.get(i).equals(correctAnswers.get(i))) {
-                resultText.setText(R.string.correct);
-                resultText.setTextColor(Color.GREEN);
-            } else {
-                resultText.setText(R.string.incorrectttttt);
-                resultText.setTextColor(Color.RED);
-            }
-            resultText.setTextSize(16);
-            resultText.setTextAppearance(android.graphics.Typeface.BOLD);
-            questionContainer.addView(resultText);
 
             // Divider line
             android.view.View divider = new android.view.View(this);
@@ -117,18 +111,57 @@ public class ViewScores extends AppCompatActivity {
         }
     }
 
-    private ArrayList<String> getQuestionsFromStrings() {
-        ArrayList<String> questions = new ArrayList<>();
-        questions.add(getString(R.string.question_01));
-        questions.add(getString(R.string.question_02));
-        questions.add(getString(R.string.question_03));
-        questions.add(getString(R.string.question_04));
-        questions.add(getString(R.string.question_05));
-        questions.add(getString(R.string.question_06));
-        questions.add(getString(R.string.question_07));
-        questions.add(getString(R.string.question_08));
-        questions.add(getString(R.string.question_09));
-        questions.add(getString(R.string.question_10));
-        return questions;
+    private void loadQuestionsFromFile() {
+        try {
+            // Read from assets folder
+            InputStream is = getAssets().open("SavedData.txt");
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+
+            StringBuilder fileContents = new StringBuilder();
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                fileContents.append(line).append("\n");
+            }
+
+            br.close();
+            parseQuestionsFromText(fileContents.toString());
+
+            Toast.makeText(this, "Questions loaded successfully!", Toast.LENGTH_SHORT).show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error loading questions", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void parseQuestionsFromText(String fileContents) {
+        String[] lines = fileContents.split("\n");
+
+        for (String line : lines) {
+            if (line.trim().isEmpty()) continue;
+
+            // Split by | delimiter
+            String[] parts = line.split("\\|");
+
+            if (parts.length >= 6) {
+                String answer = parts[0].trim();
+                String questionText = parts[1].trim();
+                String hint = parts[2].trim();
+                String imagePath = parts[3].trim();
+                String soundPath = parts[4].trim();
+                String[] choicesArray = parts[5].split(",");
+
+                // Convert choices array to ArrayList
+                ArrayList<String> choices = new ArrayList<>();
+                for (String choice : choicesArray) {
+                    choices.add(choice.trim());
+                }
+
+                // Create and add the question
+                questions.add(new Question(questionText, hint, answer, imagePath, soundPath, choices));
+            }
+        }
     }
 }
